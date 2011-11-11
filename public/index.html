@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        
+        <title>Webchat</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+        <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+        
+        <script type="text/javascript">
+            $(document).ready(function () {
+              
+              var sock = io.connect();
+              
+              sock.on('message', function (data) {
+                  
+                var obj = JSON.parse(data);
+                
+                console.log(data);
+                
+                if(obj.message) {
+                    console.log("writen");
+                    div = document.createElement("div");
+                    $(div).text(obj.message);
+                    $('#messages').append(div);
+                } 
+                
+                if(obj.clients){
+                    console.log("client");
+                  $('#clients').text(obj.clients + " clients connectés" );
+                }
+              });
+              
+              $("#send").click(function() { 
+                  console.log("click");
+                  sock.send($("#write").text()); 
+                  $("#write").html("");
+              });
+            });   
+        </script>
+        <style type="text/css">
+            #write {
+                border: 1px solid black;
+                cursor: text;
+                min-height: 5em;
+            }
+            
+            #messages div:nth-child(2n){
+                background-color: #ccc; 
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Webchat</h1>
+        
+        <div id="clients">Personne n'est connecté</div>
+        
+        <section id="messages">
+        
+        </section>
+        
+        <section id="write" contenteditable="true" >
+        
+        </section>
+        
+        <p><button id="send">Send</button></p>
+    
+    </body>
+</html>
